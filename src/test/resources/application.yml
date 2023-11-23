@@ -1,3 +1,4 @@
 spring:
   jackson:
-    default-property-inclusion: always
+    deserialization:
+      accept-empty-string-as-null-object: false

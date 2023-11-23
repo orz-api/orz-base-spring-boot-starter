@@ -10,5 +10,5 @@ public class OrzAlarmBo {
     private final String event;
     private final String summary;
     private final List<String> stacks;
-    private final Map<String, Object> params;
+    private final Map<String, Object> payload;
 }

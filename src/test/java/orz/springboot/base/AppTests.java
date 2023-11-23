@@ -12,6 +12,9 @@ class AppTests {
     @Value("${logging.file.path}")
     private String loggingFilePath;
 
+    @Value("${logging.config}")
+    private String loggingConfig;
+
     @Value("${spring.jackson.default-property-inclusion}")
     private String jacksonDefaultPropertyInclusion;
 
@@ -27,16 +30,19 @@ class AppTests {
             OrzBaseUtils.getAppContext();
         });
 
-        // default by orz/0000_orz_base.properties
+        // default by META-INF/orz/0000_orz_base.properties
         assertEquals("./log", loggingFilePath);
 
+        // default by META-INF/orz/0000_orz_base.properties
+        assertEquals("classpath:logback-orz.xml", loggingConfig);
+
+        // default by META-INF/orz/0000_orz_base.properties
+        assertEquals("non_null", jacksonDefaultPropertyInclusion);
+
         // override by application.yml
-        assertEquals("always", jacksonDefaultPropertyInclusion);
+        assertEquals("false", jacksonDeserializationAcceptEmptyStringAsNullObject);
 
-        // default by orz/0000_orz_base.properties
-        assertEquals("true", jacksonDeserializationAcceptEmptyStringAsNullObject);
-
-        // default by orz/0000_orz_base.properties
+        // default by META-INF/orz/0000_orz_base.properties
         assertEquals("false", jacksonSerializationFailOnEmptyBeans);
     }
 }

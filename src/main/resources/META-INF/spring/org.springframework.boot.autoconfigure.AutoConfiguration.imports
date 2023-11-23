@@ -1,6 +1,5 @@
 orz.springboot.base.OrzBaseProps
 orz.springboot.base.json.OrzJsonLongModule
-orz.springboot.alarm.OrzAlarm
 orz.springboot.alarm.OrzAlarmProps
 orz.springboot.alarm.OrzAlarmManager
 orz.springboot.alarm.OrzAlarmBeanPostProcessor

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import orz.springboot.alarm.model.OrzAlarmBo;
 import orz.springboot.alarm.model.OrzAlarmLogPo;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Component
 public class OrzAlarmLogExecutor implements OrzAlarmExecutor {
@@ -26,10 +29,19 @@ public class OrzAlarmLogExecutor implements OrzAlarmExecutor {
         return Ordered.HIGHEST_PRECEDENCE;
     }
 
-    @SneakyThrows
     @Override
     public void alarm(OrzAlarmBo bo) {
-        var po = new OrzAlarmLogPo(bo.getEvent(), bo.getSummary(), bo.getStacks(), bo.getParams());
-        logger.error(objectMapper.writeValueAsString(po));
+        try {
+            logger.error(objectMapper.writeValueAsString(new OrzAlarmLogPo(bo.getEvent(), bo.getSummary(), bo.getStacks(), bo.getPayload())));
+        } catch (Exception e) {
+            writeFallback(bo, e);
+        }
+    }
+
+    @SneakyThrows
+    private void writeFallback(OrzAlarmBo bo, Exception e) {
+        var payload = bo.getPayload().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> (Object) String.valueOf(entry.getValue())));
+        payload.put("@OrzAlarmLogExecutorException", OrzAlarmUtils.getStacks(e, 4));
+        logger.error(objectMapper.writeValueAsString(new OrzAlarmLogPo(bo.getEvent(), bo.getSummary(), bo.getStacks(), payload)));
     }
 }
