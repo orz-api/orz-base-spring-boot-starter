@@ -32,7 +32,7 @@ public class OrzAlarmLogExecutor implements OrzAlarmExecutor {
     @Override
     public void alarm(OrzAlarmBo bo) {
         try {
-            logger.error(objectMapper.writeValueAsString(new OrzAlarmLogPo(bo.getEvent(), bo.getSummary(), bo.getStacks(), bo.getPayload())));
+            logger.error(objectMapper.writeValueAsString(new OrzAlarmLogPo(bo.getEvent(), bo.getUuid(), bo.getTime(), bo.getSummary(), bo.getStacks(), bo.getPayload())));
         } catch (Exception e) {
             writeFallback(bo, e);
         }
@@ -42,6 +42,6 @@ public class OrzAlarmLogExecutor implements OrzAlarmExecutor {
     private void writeFallback(OrzAlarmBo bo, Exception e) {
         var payload = bo.getPayload().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> (Object) String.valueOf(entry.getValue())));
         payload.put("@OrzAlarmLogExecutorException", OrzAlarmUtils.getStacks(e, 4));
-        logger.error(objectMapper.writeValueAsString(new OrzAlarmLogPo(bo.getEvent(), bo.getSummary(), bo.getStacks(), payload)));
+        logger.error(objectMapper.writeValueAsString(new OrzAlarmLogPo(bo.getEvent(), bo.getUuid(), bo.getTime(), bo.getSummary(), bo.getStacks(), payload)));
     }
 }

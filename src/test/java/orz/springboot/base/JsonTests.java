@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import orz.springboot.base.description.OrzDescription;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static orz.springboot.base.description.OrzDescriptionUtils.descTitles;
 
 @SpringBootTest
 public class JsonTests {
@@ -21,7 +23,8 @@ public class JsonTests {
 
     @Test
     public void testLongField() throws JsonProcessingException {
-        String result;
+        var result = (String) null;
+
         var model = new TestModel1(
                 "1", 2L, 3L,
                 Arrays.asList(1L, 2L, 3L),
@@ -38,6 +41,19 @@ public class JsonTests {
         assertEquals(objectMapper.readValue(result, TestModel1.class), model);
     }
 
+    @Test
+    public void testDescriptionField() throws JsonProcessingException {
+        var result = (String) null;
+
+        var model = new TestModel2(descTitles("test").values("a", 1, "b", 2L));
+
+        result = objectMapper.writeValueAsString(model.getDescription());
+        assertEquals(result, "\"test: a(`1`), b(`2`)\"");
+
+        result = objectMapper.writeValueAsString(model);
+        assertEquals(result, "{\"description\":\"test: a(`1`), b(`2`)\"}");
+    }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -48,5 +64,12 @@ public class JsonTests {
         private List<Long> field4;
         private Long[] field5;
         private long[] field6;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    private static class TestModel2 {
+        private OrzDescription description;
     }
 }

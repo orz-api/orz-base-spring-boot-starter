@@ -2,6 +2,7 @@ package orz.springboot.alarm;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import javax.annotation.Nonnull;
 public class OrzAlarmBeanPostProcessor implements BeanPostProcessor, Ordered {
     private final OrzAlarmManager alarmManager;
 
+    @Lazy
     public OrzAlarmBeanPostProcessor(OrzAlarmManager alarmManager) {
         this.alarmManager = alarmManager;
     }

@@ -5,10 +5,8 @@ import org.springframework.stereotype.Component;
 import orz.springboot.alarm.model.OrzAlarmBo;
 import orz.springboot.base.OrzBaseUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Component
 public class OrzAlarmManager {
@@ -32,9 +30,11 @@ public class OrzAlarmManager {
                 .forEach(executor -> executor.alarm(bo));
     }
 
-    public void alarm(String event, String summary, Throwable throwable, Map<String, Object> payload) {
+    public void alarm(String event, String uuid, String summary, Throwable throwable, Map<String, Object> payload) {
         alarm(new OrzAlarmBo(
-                StringUtils.defaultIfBlank(event, "@ORZ_ALARM_EMPTY_EVENT"),
+                StringUtils.defaultIfBlank(event, "@ORZ_ALARM_EVENT_EMPTY"),
+                StringUtils.defaultIfBlank(uuid, UUID.randomUUID().toString()),
+                LocalDateTime.now(),
                 StringUtils.defaultIfBlank(summary, null),
                 OrzAlarmUtils.getStacks(throwable, props.getStacksMaxLines()),
                 OrzBaseUtils.copyImmutableMap(payload)

@@ -1,6 +1,7 @@
 package orz.springboot.alarm;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import orz.springboot.alarm.exception.OrzAlarmException;
 import orz.springboot.base.OrzBaseUtils;
 
 import javax.annotation.Nullable;
@@ -34,11 +35,19 @@ public class OrzAlarmUtils {
         return List.copyOf(stacks);
     }
 
+    public static void alarm(String event, @Nullable String uuid, @Nullable String summary, @Nullable Throwable throwable, @Nullable Map<String, Object> payload) {
+        getAlarmManager().alarm(event, uuid, summary, throwable, payload);
+    }
+
     public static void alarm(String event, @Nullable String summary, @Nullable Throwable throwable, @Nullable Map<String, Object> payload) {
-        getAlarmManager().alarm(event, summary, throwable, payload);
+        alarm(event, null, summary, throwable, payload);
     }
 
     public static void alarm(String event) {
-        alarm(event, null, null, null);
+        alarm(event, null, null, null, null);
+    }
+
+    public static void alarm(OrzAlarmException exception, @Nullable Throwable topThrowable) {
+        alarm(exception.getEvent(), exception.getUuid(), exception.getSummary(), topThrowable, exception.getPayload());
     }
 }

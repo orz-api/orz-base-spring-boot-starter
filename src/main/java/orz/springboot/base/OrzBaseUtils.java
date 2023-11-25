@@ -1,9 +1,8 @@
 package orz.springboot.base;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
+import orz.springboot.alarm.exception.OrzAlarmException;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class OrzBaseUtils {
@@ -15,35 +14,6 @@ public class OrzBaseUtils {
 
     public static ConfigurableApplicationContext getAppContext() {
         return Objects.requireNonNull(OrzBaseUtils.appContext);
-    }
-
-    public static String message(@Nullable String reason, Object... args) {
-        var builder = new StringBuilder();
-        if (StringUtils.isNotBlank(reason)) {
-            builder.append(reason);
-        }
-        if (args != null && args.length > 0) {
-            if (StringUtils.isNotBlank(reason)) {
-                builder.append(": ");
-            }
-            for (int i = 0; i < args.length; i += 2) {
-                if (i + 1 < args.length) {
-                    builder.append(args[i]).append("=[").append(args[i + 1]).append("]");
-                } else {
-                    builder.append(args[i]);
-                }
-                if (i + 2 < args.length) {
-                    builder.append(" ");
-                }
-            }
-        }
-        return builder.toString();
-    }
-
-    public static void check(boolean expressionRst, String expressionStr) {
-        if (!expressionRst) {
-            throw new IllegalArgumentException(message("check failed", "expression", expressionStr));
-        }
     }
 
     public static <T extends Throwable> Optional<T> getException(Class<T> instanceClass, Throwable top) {
@@ -67,14 +37,20 @@ public class OrzBaseUtils {
         return Optional.ofNullable(result);
     }
 
-    public static <K, V> HashMap<K, V> newHashMapWithPairs(Object... pairs) {
+    public static void assertion(boolean expressionRst, String expressionStr) {
+        if (!expressionRst) {
+            throw new OrzAlarmException("@ORZ_ASSERTION_ERROR", hashMap("expression", expressionStr));
+        }
+    }
+
+    public static <K, V> LinkedHashMap<K, V> hashMapPairs(Object... pairs) {
         if (pairs == null || pairs.length == 0) {
-            return new HashMap<>();
+            return new LinkedHashMap<>();
         }
         if (pairs.length % 2 != 0) {
             throw new IllegalArgumentException("pairs length must be even");
         }
-        var map = new HashMap<>();
+        var map = new LinkedHashMap<>();
         for (int i = 0; i < pairs.length; i += 2) {
             var k = pairs[i];
             if (k == null) {
@@ -84,47 +60,47 @@ public class OrzBaseUtils {
             map.put(k, v);
         }
         // noinspection unchecked
-        return (HashMap<K, V>) map;
+        return (LinkedHashMap<K, V>) map;
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1) {
-        return newHashMapWithPairs(k1, v1);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1) {
+        return hashMapPairs(k1, v1);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2) {
-        return newHashMapWithPairs(k1, v1, k2, v2);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2) {
+        return hashMapPairs(k1, v1, k2, v2);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3, k4, v4);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3, k4, v4);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8, k9, v9);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8, k9, v9);
     }
 
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10) {
-        return newHashMapWithPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8, k9, v9, k10, v10);
+    public static <K, V> LinkedHashMap<K, V> hashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5, K k6, V v6, K k7, V v7, K k8, V v8, K k9, V v9, K k10, V v10) {
+        return hashMapPairs(k1, v1, k2, v2, k3, v3, k4, v4, k5, v5, k6, v6, k7, v7, k8, v8, k9, v9, k10, v10);
     }
 
     public static <K, V> Map<K, V> copyImmutableMap(Map<K, V> map) {
@@ -132,6 +108,6 @@ public class OrzBaseUtils {
             return null;
         }
         // 不可使用 Map.copyOf，因为 Map.copyOf 不允许 value 为 null
-        return Collections.unmodifiableMap(new HashMap<>(map));
+        return Collections.unmodifiableMap(new LinkedHashMap<>(map));
     }
 }

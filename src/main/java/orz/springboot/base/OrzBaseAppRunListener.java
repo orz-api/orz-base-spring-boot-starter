@@ -16,7 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static orz.springboot.base.OrzBaseUtils.message;
+import static orz.springboot.base.description.OrzDescriptionUtils.desc;
+
 
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -65,7 +66,7 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
 
     protected Map<String, Object> loadDefaultProperties() throws IOException {
         var resourcePropertiesList = Stream.of(new PathMatchingResourcePatternResolver().getResources(PROPERTIES_PATTERN))
-                .sorted(Comparator.comparing(OrzBaseAppRunListener::getResourceName).reversed())
+                .sorted(Comparator.comparing(OrzBaseAppRunListener::getResourceName))
                 .map(OrzBaseAppRunListener::readPropertiesResource)
                 .toList();
 
@@ -74,26 +75,25 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
                 .filter(Objects::nonNull)
                 .toList();
 
-        // 因为优先级高的属性应覆盖优先级低的，所以要反向遍历
-        var result = new HashMap<String, Object>();
-        for (var i = resourcePropertiesList.size() - 1; i >= 0; i--) {
-            var properties = resourcePropertiesList.get(i);
+        var result = new LinkedHashMap<String, Object>();
+        for (Properties properties : resourcePropertiesList) {
             for (Object key : Collections.list(properties.propertyNames())) {
                 result.put((String) key, properties.get(key));
             }
         }
+        // 因为优先级高的属性应覆盖优先级低的，所以要反向遍历
         for (var i = startupListenerPropertiesList.size() - 1; i >= 0; i--) {
             var properties = startupListenerPropertiesList.get(i);
             for (Object key : Collections.list(properties.propertyNames())) {
                 result.put((String) key, properties.get(key));
             }
         }
-        System.out.println(result);
         return result;
     }
 
     @SneakyThrows
     protected static List<OrzBaseStartupListener> readStartupListenerResource(Resource resource) {
+        log.info(desc("load startup listener", "resource", resource));
         var listenerList = Arrays.stream(resource.getContentAsString(StandardCharsets.UTF_8).split("\n"))
                 .map(String::trim)
                 .filter(StringUtils::isNotBlank)
@@ -101,21 +101,22 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
                 .map(OrzBaseStartupListener.class::cast)
                 .toList();
         if (listenerList.isEmpty()) {
-            log.warn(message("load startup listener empty", "resource", resource));
+            log.warn(desc("load startup listener empty"));
         } else {
-            listenerList.forEach(l -> log.info(message("load startup listener", "resource", resource, "listener", l.getClass(), "order", l.getOrder())));
+            listenerList.forEach(l -> log.info(desc(null, "listener", l.getClass(), "order", l.getOrder())));
         }
         return listenerList;
     }
 
     @SneakyThrows
     protected static Properties readPropertiesResource(Resource resource) {
+        log.info(desc("load properties", "resource", resource));
         var properties = new Properties();
         properties.load(resource.getInputStream());
         if (properties.isEmpty()) {
-            log.warn(message("load properties empty", "resource", resource));
+            log.warn(desc("load properties empty"));
         } else {
-            properties.forEach((key, value) -> log.info(message("load properties", "resource", resource, "key", key, "value", value)));
+            properties.forEach((key, value) -> log.info(desc(null, "key", key, "value", value)));
         }
         return properties;
     }

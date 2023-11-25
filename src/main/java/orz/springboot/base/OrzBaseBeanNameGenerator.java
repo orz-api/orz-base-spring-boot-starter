@@ -12,6 +12,8 @@ import orz.springboot.base.annotation.OrzFullyQualifier;
 
 import javax.annotation.Nonnull;
 
+import static orz.springboot.base.description.OrzDescriptionUtils.desc;
+
 @Slf4j
 public class OrzBaseBeanNameGenerator implements BeanNameGenerator {
     private final String projectPackagePrefix;
@@ -45,7 +47,7 @@ public class OrzBaseBeanNameGenerator implements BeanNameGenerator {
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("generateBeanName: {}, name: {}", definition.getBeanClassName(), name);
+            log.debug(desc("generate bean name", "bean", definition.getBeanClassName(), "name", name));
         }
         return name;
     }
