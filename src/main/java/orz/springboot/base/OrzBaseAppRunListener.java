@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 
 import static orz.springboot.base.description.OrzDescriptionUtils.desc;
 
-
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class OrzBaseAppRunListener implements SpringApplicationRunListener {

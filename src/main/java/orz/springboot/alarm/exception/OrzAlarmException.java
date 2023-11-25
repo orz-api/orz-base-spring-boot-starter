@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import static orz.springboot.base.description.OrzDescriptionUtils.descValues;
 
-
 @Getter
 public class OrzAlarmException extends RuntimeException {
     private final String event;
