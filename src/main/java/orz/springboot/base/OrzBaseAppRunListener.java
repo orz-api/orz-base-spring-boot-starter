@@ -5,7 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
@@ -13,6 +16,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -28,6 +32,7 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
 
     public OrzBaseAppRunListener(SpringApplication application) {
         startupListenerList = loadStartupListenerList();
+        application.addListeners(new ContextRefreshedListener());
         initialized(application);
         configureBeanNameGenerator(application);
         configureDefaultProperties(application);
@@ -40,7 +45,21 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
     @Override
     public void contextPrepared(ConfigurableApplicationContext context) {
         OrzBaseUtils.setAppContext(context);
-        startupListenerList.forEach(l -> l.onApplicationContextPrepared(context));
+        startupListenerList.forEach(l -> l.onContextPrepared(context));
+    }
+
+    @Override
+    public void contextLoaded(ConfigurableApplicationContext context) {
+        startupListenerList.forEach(l -> l.onContextLoaded(context));
+    }
+
+    public void contextRefreshed(ApplicationContext context) {
+        startupListenerList.forEach(l -> l.onContextRefreshed(context));
+    }
+
+    @Override
+    public void started(ConfigurableApplicationContext context, Duration timeTaken) {
+        startupListenerList.forEach(l -> l.onStarted(context, timeTaken));
     }
 
     protected void configureBeanNameGenerator(SpringApplication application) {
@@ -127,5 +146,12 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
     @SneakyThrows
     protected static Object constructObject(String className) {
         return Class.forName(className).getConstructor().newInstance();
+    }
+
+    public class ContextRefreshedListener implements ApplicationListener<ContextRefreshedEvent> {
+        @Override
+        public void onApplicationEvent(ContextRefreshedEvent event) {
+            contextRefreshed(event.getApplicationContext());
+        }
     }
 }
