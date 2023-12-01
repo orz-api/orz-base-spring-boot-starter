@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGenerator;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -34,11 +35,11 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
         startupListenerList = loadStartupListenerList();
         application.addListeners(new ContextRefreshedListener());
         initialized(application);
-        configureBeanNameGenerator(application);
-        configureDefaultProperties(application);
     }
 
     protected void initialized(SpringApplication application) {
+        configureBeanNameGenerator(application);
+        configureDefaultProperties(application);
         startupListenerList.forEach(l -> l.onInitialized(application));
     }
 
@@ -63,7 +64,7 @@ public class OrzBaseAppRunListener implements SpringApplicationRunListener {
     }
 
     protected void configureBeanNameGenerator(SpringApplication application) {
-        application.setBeanNameGenerator(new OrzBaseBeanNameGenerator(application.getMainApplicationClass()));
+        application.setBeanNameGenerator(FullyQualifiedAnnotationBeanNameGenerator.INSTANCE);
     }
 
     @SneakyThrows
