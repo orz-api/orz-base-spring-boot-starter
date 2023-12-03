@@ -87,7 +87,7 @@ public class OrzDescriptionUtils {
     }
 
     public static OrzDescription descEmpty() {
-        return new OrzDescription(null, null);
+        return OrzDescription.EMPTY;
     }
 
     public static OrzDescription descTitles(String... titles) {

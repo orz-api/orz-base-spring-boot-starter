@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class OrzDescription {
+    public static final OrzDescription EMPTY = new OrzDescription(null, null);
+
     private final LinkedHashSet<String> titleSet;
     private final LinkedHashSet<String> valueSet;
     private String string;
