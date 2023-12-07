@@ -1,10 +1,10 @@
 package orz.springboot.alarm;
 
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import orz.springboot.alarm.exception.OrzAlarmException;
 import orz.springboot.base.OrzBaseUtils;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

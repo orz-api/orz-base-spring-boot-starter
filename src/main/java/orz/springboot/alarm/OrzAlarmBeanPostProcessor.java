@@ -1,12 +1,11 @@
 package orz.springboot.alarm;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nonnull;
 
 @Component
 public class OrzAlarmBeanPostProcessor implements BeanPostProcessor, Ordered {
