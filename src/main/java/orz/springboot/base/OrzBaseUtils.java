@@ -122,13 +122,17 @@ public class OrzBaseUtils {
         requestAttributes.setAttribute(name, value, RequestAttributes.SCOPE_REQUEST);
     }
 
-    public static <T> Optional<T> getRequestAttribute(String name, Class<T> cls) {
+    public static <T> Optional<T> getRequestAttribute(String name) {
         var requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
             throw new OrzUnexpectedException("RequestContextHolder.getRequestAttributes() is null");
         }
         // noinspection unchecked
-        return (Optional<T>) Optional.ofNullable(requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST))
-                .filter(cls::isInstance);
+        return (Optional<T>) Optional.ofNullable(requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST));
+    }
+
+    public static <T> Optional<T> getRequestAttribute(String name, Class<T> cls) {
+        // noinspection unchecked
+        return (Optional<T>) getRequestAttribute(name).filter(cls::isInstance);
     }
 }
