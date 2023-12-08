@@ -118,11 +118,10 @@ public class OrzBaseUtils {
         requestAttributes.setAttribute(name, value, RequestAttributes.SCOPE_REQUEST);
     }
 
-    public static <T> T getRequestAttribute(String name, Class<T> cls) {
+    public static <T> Optional<T> getRequestAttribute(String name, Class<T> cls) {
         // noinspection unchecked
-        return (T) Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+        return (Optional<T>) Optional.ofNullable(RequestContextHolder.getRequestAttributes())
                 .map(requestAttributes -> requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST))
-                .filter(cls::isInstance)
-                .orElse(null);
+                .filter(cls::isInstance);
     }
 }
