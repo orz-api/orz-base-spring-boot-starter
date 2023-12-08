@@ -4,6 +4,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import orz.springboot.alarm.exception.OrzAlarmException;
+import orz.springboot.alarm.exception.OrzUnexpectedException;
 
 import java.util.*;
 
@@ -114,14 +115,20 @@ public class OrzBaseUtils {
     }
 
     public static void setRequestAttribute(String name, Object value) {
-        var requestAttributes = Objects.requireNonNull(RequestContextHolder.getRequestAttributes());
+        var requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            throw new OrzUnexpectedException("RequestContextHolder.getRequestAttributes() is null");
+        }
         requestAttributes.setAttribute(name, value, RequestAttributes.SCOPE_REQUEST);
     }
 
     public static <T> Optional<T> getRequestAttribute(String name, Class<T> cls) {
+        var requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            throw new OrzUnexpectedException("RequestContextHolder.getRequestAttributes() is null");
+        }
         // noinspection unchecked
-        return (Optional<T>) Optional.ofNullable(RequestContextHolder.getRequestAttributes())
-                .map(requestAttributes -> requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST))
+        return (Optional<T>) Optional.ofNullable(requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST))
                 .filter(cls::isInstance);
     }
 }

@@ -9,6 +9,10 @@ public class OrzUnexpectedException extends OrzAlarmException {
         this(null, (Map<String, Object>) null, null);
     }
 
+    public OrzUnexpectedException(String summary) {
+        this(summary, (Map<String, Object>) null, null);
+    }
+
     public OrzUnexpectedException(Throwable cause) {
         this(null, (Map<String, Object>) null, cause);
     }
