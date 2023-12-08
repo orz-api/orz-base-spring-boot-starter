@@ -1,6 +1,8 @@
 package orz.springboot.base;
 
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import orz.springboot.alarm.exception.OrzAlarmException;
 
 import java.util.*;
@@ -109,5 +111,18 @@ public class OrzBaseUtils {
         }
         // 不可使用 Map.copyOf，因为 Map.copyOf 不允许 value 为 null
         return Collections.unmodifiableMap(new LinkedHashMap<>(map));
+    }
+
+    public static void setRequestAttribute(String name, Object value) {
+        var requestAttributes = Objects.requireNonNull(RequestContextHolder.getRequestAttributes());
+        requestAttributes.setAttribute(name, value, RequestAttributes.SCOPE_REQUEST);
+    }
+
+    public static <T> T getRequestAttribute(String name, Class<T> cls) {
+        // noinspection unchecked
+        return (T) Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+                .map(requestAttributes -> requestAttributes.getAttribute(name, RequestAttributes.SCOPE_REQUEST))
+                .filter(cls::isInstance)
+                .orElse(null);
     }
 }
