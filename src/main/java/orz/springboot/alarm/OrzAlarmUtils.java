@@ -43,6 +43,10 @@ public class OrzAlarmUtils {
         alarm(event, null, summary, throwable, payload);
     }
 
+    public static void alarm(String event, @Nullable Throwable throwable, @Nullable Map<String, Object> payload) {
+        alarm(event, null, throwable != null ? throwable.getMessage() : null, throwable, payload);
+    }
+
     public static void alarm(String event) {
         alarm(event, null, null, null, null);
     }
