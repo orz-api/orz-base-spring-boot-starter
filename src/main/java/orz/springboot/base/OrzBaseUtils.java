@@ -6,6 +6,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import orz.springboot.alarm.exception.OrzAlarmException;
 import orz.springboot.alarm.exception.OrzUnexpectedException;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 public class OrzBaseUtils {
@@ -134,5 +135,20 @@ public class OrzBaseUtils {
     public static <T> Optional<T> getRequestAttribute(String name, Class<T> cls) {
         // noinspection unchecked
         return (Optional<T>) getRequestAttribute(name).filter(cls::isInstance);
+    }
+
+    public static <T> Class<T> getClassGenericParameter(Class<?> cls, int index) {
+        // noinspection unchecked
+        return Optional.ofNullable(cls.getGenericSuperclass())
+                .filter(type -> type instanceof ParameterizedType)
+                .map(type -> (ParameterizedType) type)
+                .map(ParameterizedType::getActualTypeArguments)
+                .filter(types -> types.length > index)
+                .map(types -> (Class<T>) types[index])
+                .orElse(null);
+    }
+
+    public static <T> Class<T> getClassGenericParameter(Class<?> cls) {
+        return getClassGenericParameter(cls, 0);
     }
 }
