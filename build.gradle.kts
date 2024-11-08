@@ -2,12 +2,12 @@ plugins {
     signing
     `java-library`
     `maven-publish`
-    id("org.springframework.boot") version "3.3.2"
+    id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
 }
 
 group = "io.github.orz-api"
-version = "0.0.2-SNAPSHOT"
+version = "0.0.3-SNAPSHOT"
 
 java {
     toolchain {
@@ -31,7 +31,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-json")
     api("org.springframework.boot:spring-boot-starter-validation")
     api("org.apache.commons:commons-lang3")
-    api("com.google.guava:guava:33.2.1-jre")
+    api("com.google.guava:guava:33.3.1-jre")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
