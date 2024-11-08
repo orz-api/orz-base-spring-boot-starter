@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import orz.springboot.base.description.OrzDescription;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static orz.springboot.base.description.OrzDescriptionUtils.descTitles;
 
+@ActiveProfiles("json-case2")
 @SpringBootTest
-public class JsonTests {
+public class JsonCase2Tests {
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -33,25 +33,12 @@ public class JsonTests {
         );
 
         result = objectMapper.writeValueAsString(1L);
-        assertEquals(result, "\"1\"");
+        assertEquals(result, "1");
 
         result = objectMapper.writeValueAsString(model);
-        assertEquals(result, "{\"field1\":\"1\",\"field2\":\"2\",\"field3\":\"3\",\"field4\":[\"1\",\"2\",\"3\"],\"field5\":[\"3\",\"4\",\"5\"],\"field6\":[\"6\",\"7\",\"8\"]}");
+        assertEquals(result, "{\"field1\":\"1\",\"field2\":2,\"field3\":3,\"field4\":[1,2,3],\"field5\":[3,4,5],\"field6\":[6,7,8]}");
 
         assertEquals(objectMapper.readValue(result, TestModel1.class), model);
-    }
-
-    @Test
-    public void testDescriptionField() throws JsonProcessingException {
-        var result = (String) null;
-
-        var model = new TestModel2(descTitles("test").values("a", 1, "b", 2L));
-
-        result = objectMapper.writeValueAsString(model.getDescription());
-        assertEquals(result, "\"test: a(`1`), b(`2`)\"");
-
-        result = objectMapper.writeValueAsString(model);
-        assertEquals(result, "{\"description\":\"test: a(`1`), b(`2`)\"}");
     }
 
     @Data
@@ -64,12 +51,5 @@ public class JsonTests {
         private List<Long> field4;
         private Long[] field5;
         private long[] field6;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    private static class TestModel2 {
-        private OrzDescription description;
     }
 }

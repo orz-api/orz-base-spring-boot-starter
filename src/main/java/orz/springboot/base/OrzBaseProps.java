@@ -8,4 +8,10 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "orz.base")
 public class OrzBaseProps {
+    public JsonConfig json = new JsonConfig();
+
+    @Data
+    public static class JsonConfig {
+        private boolean longAsString = true;
+    }
 }

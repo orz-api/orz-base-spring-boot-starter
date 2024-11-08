@@ -1,0 +1,4 @@
+orz:
+  base:
+    json:
+      long-as-string: false
